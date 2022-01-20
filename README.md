@@ -10,6 +10,8 @@ The current approach works in the context of a component that uses the hook. For
 
 Another limitation would be probably related to the API, which I think could be improved such that it could support an option for handling the logic for equal cards which would enable us to make a single call to the server. In fact, most likely most of the logic could be moved to the server. The alternative would be to not use an API as such state could be kept on the client and no client-server communication would be required. Having all the state on the client and no server at all for this app is the best solution.
 
+Another thing that comes to my mind is error handling. A serious app would show proper messages to the user if for instance the communication with the server fails. However, for that we should first define the UX.
+
 ## Available Scripts
 
 In the project directory, you can run:
