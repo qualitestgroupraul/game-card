@@ -1,6 +1,14 @@
-# Getting Started with Create React App
+# card game
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Decisions
+
+I chose to create a reusable hook that uses useReducer for managing the state. This approach should be good enough for a simple application like this. In terms of styling I only made use of styled components for highlighting the winning card for a certain round and for aligning the cards, so that I could finish the app as quickly as possible, since the styling was not a priority.
+
+## Limitations
+
+The current approach works in the context of a component that uses the hook. For a more complex app in which we might want to show the same state in multiple areas of the app we would probably need a more sophisticated approach to state management either based on an external store (e.g Redux based) or using a React context so that we avoid props drilling.
+
+Another limitation would be probably related to the API, which I think could be improved such that it could support an option for handling the logic for equal cards which would enable us to make a single call to the server. In fact, most likely most of the logic could be moved to the server. The alternative would be to not use an API as such state could be kept on the client and no client-server communication would be required. Having all the state on the client and no server at all for this app is the best solution.
 
 ## Available Scripts
 
