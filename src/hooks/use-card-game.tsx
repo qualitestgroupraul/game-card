@@ -55,7 +55,6 @@ function reducer(state: CardGameState, action: CardGameAction) {
             return {
                 ...initialState,
                 isLoadingGame: true,
-                gameWinnerIndex: null
             };
         }
         case 'init-game': {
@@ -138,8 +137,8 @@ export default function useCardGame() {
         dispatch({type: 'start-next-round'});
 
         if (wasPreviousRoundEqual) {
-            await post(`${cardGameState.deckId}/return/?cards=${previousRoundCards!.map(card => card.code).join()}`);
-            await post(`${cardGameState.deckId}/shuffle/?remaining=true`);
+            await post(`${cardGameState.deckId}/return/`, {cards: previousRoundCards!.map(card => card.code).join()});
+            await post(`${cardGameState.deckId}/shuffle/`, {remaining: true});
         }
 
         const {
