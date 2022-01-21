@@ -12,9 +12,9 @@ export default function CardGame() {
         player2CardsCount,
         isLoadingNextRound,
         currentRoundCards,
-        currentRoundWinnerIndex,
+        currentRoundWinner,
         remainingCardsCount,
-        gameWinnerIndex,
+        gameWinner,
         startNextRound,
         startGame
     } = useCardGame();
@@ -32,8 +32,8 @@ export default function CardGame() {
         <CurrentRoundCards
             isLoadingNextRound={isLoadingNextRound}
             currentRoundCards={currentRoundCards}
-            currentRoundWinnerIndex={currentRoundWinnerIndex}
-            gameWinnerIndex={gameWinnerIndex}
+            currentRoundWinner={currentRoundWinner}
+            gameWinner={gameWinner}
             onStartNextRound={startNextRound}
             onStartNewGame={startGame} />
         <RemainingCards remainingCardsCount={remainingCardsCount} />

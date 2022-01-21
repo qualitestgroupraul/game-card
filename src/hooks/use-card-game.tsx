@@ -1,5 +1,5 @@
 import {useCallback, useEffect, useMemo, useReducer} from 'react';
-import {Card} from '../types';
+import {Card, Winner} from '../types';
 import {get, post} from '../api';
 
 type CardGameState = {
@@ -10,9 +10,9 @@ type CardGameState = {
     player2CardsCount: number,
     isLoadingNextRound: boolean,
     currentRoundCards: Card[] | null,
-    currentRoundWinnerIndex: 0 | 1 | 'equal' | null,
+    currentRoundWinner: Winner | null,
     remainingCardsCount: number,
-    gameWinnerIndex: number | null
+    gameWinner: Winner | null,
 };
 
 type CardGameAction = {
@@ -37,9 +37,9 @@ const initialState: CardGameState = {
     player2CardsCount: 0,
     isLoadingNextRound: false,
     currentRoundCards: null,
-    currentRoundWinnerIndex: null,
+    currentRoundWinner: null,
     remainingCardsCount: 0,
-    gameWinnerIndex: null
+    gameWinner: null
 };
 
 const specialCardValues = new Map([
@@ -49,7 +49,7 @@ const specialCardValues = new Map([
     ['JACK', 12]
 ])
 
-function reducer(state: CardGameState, action: CardGameAction) {
+function reducer(state: CardGameState, action: CardGameAction): CardGameState {
     switch (action.type) {
         case 'start-game': {
             return {
@@ -71,15 +71,15 @@ function reducer(state: CardGameState, action: CardGameAction) {
                 ...state,
                 isLoadingNextRound: true,
                 currentRoundCards: null,
-                currentRoundWinnerIndex: null
+                currentRoundWinner: null
             }
         }
         case 'init-next-round': {
-            const currentRoundWinnerIndex = getCurrentRoundWinnerIndex(action.currentRoundCards);
-            const player1CardsCount = currentRoundWinnerIndex === 0
+            const currentRoundWinner = getCurrentRoundWinner(action.currentRoundCards);
+            const player1CardsCount = currentRoundWinner === 'player1'
                 ? state.player1CardsCount + 2
                 : state.player1CardsCount;
-            const player2CardsCount = currentRoundWinnerIndex === 1
+            const player2CardsCount = currentRoundWinner === 'player2'
                 ? state.player2CardsCount + 2
                 : state.player2CardsCount;
 
@@ -87,14 +87,16 @@ function reducer(state: CardGameState, action: CardGameAction) {
                 ...state,
                 isLoadingNextRound: false,
                 currentRoundCards: action.currentRoundCards,
-                currentRoundWinnerIndex,
+                currentRoundWinner,
                 player1CardsCount,
                 player2CardsCount,
                 remainingCardsCount: action.remainingCardsCount,
-                gameWinnerIndex: action.remainingCardsCount === 0 && currentRoundWinnerIndex !== 'equal'
+                gameWinner: action.remainingCardsCount === 0 && currentRoundWinner !== 'equal'
                     ? player1CardsCount > player2CardsCount
-                        ? 0
-                        : 1
+                        ? 'player1'
+                        : player1CardsCount === player2CardsCount
+                            ? 'equal'
+                            : 'player2'
                     : null
             };
         }
@@ -104,15 +106,15 @@ function reducer(state: CardGameState, action: CardGameAction) {
     }
 }
 
-const getCurrentRoundWinnerIndex = ([card1, card2]: Card[]): 0 | 1 | 'equal' => {
+const getCurrentRoundWinner = ([card1, card2]: Card[]): Winner => {
     const card1Value = getCardValue(card1);
     const card2Value = getCardValue(card2);
 
     return card1Value > card2Value
-        ? 0
+        ? 'player1'
         : card1Value === card2Value
             ? 'equal'
-            : 1;
+            : 'player2';
 };
 
 const getCardValue = (card: Card) => {
@@ -131,7 +133,7 @@ export default function useCardGame() {
     }, []);
 
     const startNextRound = useCallback(async () => {
-        const wasPreviousRoundEqual = cardGameState.currentRoundWinnerIndex === 'equal';
+        const wasPreviousRoundEqual = cardGameState.currentRoundWinner === 'equal';
         const {currentRoundCards: previousRoundCards} = cardGameState;
 
         dispatch({type: 'start-next-round'});
@@ -154,12 +156,14 @@ export default function useCardGame() {
         startGame,
         startNextRound
     }), [
+        startGame,
+        startNextRound,
         cardGameState
     ]);
 
     useEffect(() => {
         startGame();
-    }, []);
+    }, [startGame]);
 
     return cardGameModel;
 }

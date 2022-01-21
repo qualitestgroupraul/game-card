@@ -1,12 +1,12 @@
 import React from 'react';
-import {Card} from '../types';
+import {Card, Winner} from '../types';
 import styled, {css} from 'styled-components';
 
 type Props = {
     isLoadingNextRound: boolean,
     currentRoundCards: Card[] | null,
-    currentRoundWinnerIndex: 0 | 1 | 'equal' | null,
-    gameWinnerIndex: number | null,
+    currentRoundWinner: Winner | null,
+    gameWinner: Winner | null,
     onStartNextRound: () => void,
     onStartNewGame: () => void
 };
@@ -14,8 +14,8 @@ type Props = {
 export default function CurrentRoundCards({
     isLoadingNextRound,
     currentRoundCards,
-    currentRoundWinnerIndex,
-    gameWinnerIndex,
+    currentRoundWinner,
+    gameWinner,
     onStartNextRound,
     onStartNewGame
 }: Props) {
@@ -24,9 +24,11 @@ export default function CurrentRoundCards({
     }
 
     return <div>
-        {gameWinnerIndex !== null
+        {gameWinner !== null
             ? <div>
-                Winner: {gameWinnerIndex === 0 ? 'player 1' : 'player 2'}
+                {gameWinner === 'equal'
+                    ? 'Equality!'
+                    : `Winner: ${gameWinner === 'player1' ? 'player 1' : 'player 2'}!`}
                 <div>
                     <button onClick={onStartNewGame}>start new game</button>
                 </div>
@@ -38,11 +40,11 @@ export default function CurrentRoundCards({
             ? <ImagesContainer>
                 <div>
                     <div>Player 1:</div>
-                    <Image src={currentRoundCards[0].image} winner={currentRoundWinnerIndex === 0} />
+                    <Image src={currentRoundCards[0].image} winner={currentRoundWinner === 'player1'} />
                 </div>
                 <div>
                     <div>Player 2:</div>
-                    <Image src={currentRoundCards[1].image} winner={currentRoundWinnerIndex === 1} />
+                    <Image src={currentRoundCards[1].image} winner={currentRoundWinner === 'player2'} />
                 </div>
             </ImagesContainer>
             : null}
