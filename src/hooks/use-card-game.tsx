@@ -91,7 +91,7 @@ function reducer(state: CardGameState, action: CardGameAction): CardGameState {
                 player1CardsCount,
                 player2CardsCount,
                 remainingCardsCount: action.remainingCardsCount,
-                gameWinner: action.remainingCardsCount === 0 && currentRoundWinner !== 'equal'
+                gameWinner: action.remainingCardsCount === 0
                     ? player1CardsCount > player2CardsCount
                         ? 'player1'
                         : player1CardsCount === player2CardsCount
